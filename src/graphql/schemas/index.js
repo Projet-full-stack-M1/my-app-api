@@ -9,14 +9,12 @@ type User {
   }
   
   type Recipe {
-    id: ID!
+    recipe_id: ID!
     name: String!
     country: String!
-    photoUrl: String!
-    cookingTime: String!
-    ingredients: String!
+    photo_url: String!
+    cooking_time: String!
     preparation: String!
-    allergens: String
   }
   
   type Wishlist {
