@@ -1,11 +1,15 @@
 const typeDefs = `
 type User {
-    id: ID!
-    firstName: String!
-    lastName: String!
+    user_id: ID!
+    first_name: String!
+    last_name: String!
     email: String!
     password: String!
     wishlist: [Recipe]
+  }
+  type AuthPayload {
+    token: String!
+    user: User!
   }
   
   type Recipe {
@@ -15,6 +19,12 @@ type User {
     photo_url: String!
     cooking_time: String!
     preparation: String!
+    ingredients: [Ingredients]
+  }
+
+  type Ingredients {
+    ingredient_id: ID!
+    name: String!
   }
   
   type Wishlist {
@@ -25,7 +35,14 @@ type User {
   type Query{
     getRecipes: [Recipe]!
     getRecipe(id: ID!): Recipe
-  }`;
+    me: User
+  }
+  type Mutation {
+    register(first_name: String!,last_name: String!, email: String!, password: String!): User
+    login(email: String!, password: String!): AuthPayload
+  }
+  
+  `;
 
 
 module.exports = typeDefs;
