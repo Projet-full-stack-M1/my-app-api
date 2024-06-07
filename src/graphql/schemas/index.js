@@ -6,6 +6,7 @@ type User {
     email: String!
     password: String!
     wishlist: [Recipe]
+    
   }
   type AuthPayload {
     token: String!
@@ -29,17 +30,21 @@ type User {
   
   type Wishlist {
     id: ID!
-    user: User!
-    recipes: [Recipe!]!
+    user_id: User!
+    recipe_id: [Recipe!]!
   }
   type Query{
     getRecipes: [Recipe]!
     getRecipe(id: ID!): Recipe
     me: User
+    getRecipesByCountry(country: String!): [Recipe]!
+    getWishlist: [Recipe]!
   }
   type Mutation {
     register(first_name: String!,last_name: String!, email: String!, password: String!): User
     login(email: String!, password: String!): AuthPayload
+    addToWishlist(recipe_id: ID!): Wishlist
+    removeFromWishlist(recipe_id: ID!): Boolean
   }
   
   `;

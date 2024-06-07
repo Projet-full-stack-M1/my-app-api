@@ -35,12 +35,42 @@ const resolvers = {
                 throw new Error('Error fetching recipe');
             }
         },
+        getRecipesByCountry: async (parent, { country }, context, info) => {
+          try {
+              const recipes = await Recipe.findAll({
+                  where: { country },
+                  include: [{
+                      model: Ingredients,
+                      through: { attributes: [] }
+                  }]
+              });
+              return recipes;
+          } catch (error) {
+              console.error('Error fetching recipes by country:', error);
+              throw new Error('Error fetching recipes by country');
+          }
+      },
         me: async (_, __, { user }) => {
             if (!user) {
               throw new Error('You are not authenticated!');
             }
             return await User.findById(user.id);
           },
+          getWishlist: async (_, __, { user }) => {
+            if (!user) {
+                throw new Error('You are not authenticated!');
+            }
+            try {
+                const wishlistItems = await Wishlist.findAll({
+                    where: { user_id: user.user_id },
+                    include: [Recipe]
+                });
+                return wishlistItems.map(item => item.Recipe);
+            } catch (error) {
+                console.error('Error fetching wishlist:', error);
+                throw new Error('Error fetching wishlist');
+            }
+        },
     },
     Mutation :{
         register: async (_, { first_name, last_name, email, password }) => {
@@ -78,6 +108,40 @@ const resolvers = {
               throw new Error('Error logging in user');
             }
           },
+          addToWishlist: async (_, { recipe_id }, { user }) => {
+            if (!user) {
+                throw new Error('You are not authenticated!');
+            }
+
+            try {
+                const wishlistItem = await Wishlist.create({
+                    user_id: user.user_id,
+                    recipe_id,
+                });
+                return wishlistItem;
+            } catch (error) {
+                console.error('Error adding to wishlist:', error);
+                throw new Error('Error adding to wishlist');
+            }
+        },
+        removeFromWishlist: async (_, { recipe_id }, { user }) => {
+          if (!user) {
+              throw new Error('You are not authenticated!');
+          }
+
+          try {
+              const result = await Wishlist.destroy({
+                  where: {
+                      user_id: user.user_id,
+                      recipe_id,
+                  }
+              });
+              return result > 0;
+          } catch (error) {
+              console.error('Error removing from wishlist:', error);
+              throw new Error('Error removing from wishlist');
+          }
+      }
     }
    
 }
