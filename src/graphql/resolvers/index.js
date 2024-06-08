@@ -101,8 +101,9 @@ const resolvers = {
                 process.env.JWT_SECRET,
                 { expiresIn: '1d' }
               );
-      
+              console.log('allo');
               return { token, user };
+
             } catch (error) {
               console.error('Error logging in user:', error);
               throw new Error('Error logging in user');
